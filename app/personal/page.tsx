@@ -1,10 +1,8 @@
-import SideNav from '@/app/ui/dashboard/sidenav';
 import Image from 'next/image';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
-
             <div className="flex-grow p-6 md:overflow-y-auto md:p-12">
                 <div className="mb-8">
                     {/* Profile Section */}
@@ -19,8 +17,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         />
                         <div>
                             <h1 className="text-2xl font-bold">Azat Antonyan</h1>
-                            <p className="text-gray-600">A brief description about yourself goes here. Mention your role, interests, or a short personal bio.</p>
+                            <p className="text-gray-600">A brief description about yourself goes here. Mention your
+                                role, interests, or a short personal bio.</p>
                         </div>
+                    </div>
+                    <div className='pt-10'>
+                        <h3 className='ml-10'>CV</h3>
+                        <Image
+                            src="/img.png"
+                            alt="Your Name"
+                            width={400}
+                            height={600}
+                        />
                     </div>
                 </div>
 
