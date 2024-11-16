@@ -1,6 +1,6 @@
 import SideNav from '@/app/ui/dashboard/sidenav';
 import Navbar from "@/app/components/nav-bar";
-import React from "types-react";
+import React from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (

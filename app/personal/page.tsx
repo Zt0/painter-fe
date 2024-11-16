@@ -21,15 +21,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 role, interests, or a short personal bio.</p>
                         </div>
                     </div>
-                    <div className='pt-10'>
-                        <h3 className='ml-10'>CV</h3>
-                        <Image
-                            src="/img.png"
-                            alt="Your Name"
-                            width={400}
-                            height={600}
-                        />
-                    </div>
                 </div>
 
                 {children}

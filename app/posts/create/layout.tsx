@@ -1,5 +1,7 @@
 import SideNav from '@/app/ui/dashboard/sidenav';
+import * as dotenv from 'dotenv'
 import Navbar from "@/app/components/nav-bar";
+dotenv.config()
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (

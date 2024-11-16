@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useState } from 'react';
+import axiosInstance from "@/app/lib/axios-instance";
+import {useRouter} from "next/navigation";
 export default function Page() {
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [firstName, setFirstName] = useState<string>('')
     const [lastName, setLastName] = useState<string>('')
-
+    const router = useRouter();
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-100">
             <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
@@ -65,20 +67,16 @@ export default function Page() {
                             console.log("Missing fields");
                             return;
                         }
-                        const registerResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
-                            method: 'POST',
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                email,
-                                password,
-                                firstName,
-                                lastName
-                            })
-                        });
-                        const tokens = await registerResponse.json();
-                        console.log({tokens});
+                        const response = await axiosInstance.post(`/users`, {
+                            email,
+                            password,
+                            firstName,
+                            lastName
+                        })
+
+                        const tokens = await response.data;
+
+                        router.push('/login');
                     }}
                 >
                     Register
