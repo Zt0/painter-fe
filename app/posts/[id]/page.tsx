@@ -1,67 +1,87 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import axiosInstance from "@/app/lib/axios-instance";
 
 export default function Page({ params }) {
     const { id } = params;
     const [post, setPost] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [image, setImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     async function getPost() {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tasks/${id}`, {
-                method: "GET",
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            setPost(data);
-            setTitle(data.data.task.title);
-            setDescription(data.data.task.description);
-        } catch (error) {
-            console.error("Failed to fetch post:", error);
+            setLoading(true);
+            const response = await axiosInstance.get(`/tasks/${id}`);
+            setPost(response);
+            setTitle(response.data.task.title);
+            setDescription(response.data.task.description);
+            setPreviewImage(response.data.task.image);
+        } catch (err) {
+            setError(err.response?.data?.message || "Failed to fetch post");
+            console.error("Failed to fetch post:", err);
+        } finally {
+            setLoading(false);
         }
     }
 
     useEffect(() => {
-
         getPost();
     }, [id]);
 
     async function handleUpdate(e) {
         e.preventDefault();
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("description", description);
+        if (image) {
+            formData.append("image", image);
+        }
+
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tasks/${id}`, {
-                method: "PATCH",
+            setLoading(true);
+            console.log({formData}, title, description)
+            const response = await axiosInstance.patch(`/tasks/${id}`, formData, {
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                    "Content-Type": "multipart/form-data",
                 },
-                body: JSON.stringify({ title, description })
             });
 
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-            }
-
-            const updatedData = await response.json();
-            setPost(updatedData);
-            setIsEditing(false); // Exit edit mode after successful update
-            getPost(); //
-        } catch (error) {
-            console.error("Failed to update post:", error);
+            setPost(response);
+            setPreviewImage(response.data.task.image);
+            setIsEditing(false);
+            setImage(null);
+            getPost();
+        } catch (err) {
+            setError(err.response?.data?.message || "Failed to update post");
+            console.error("Failed to update post:", err);
+        } finally {
+            setLoading(false);
         }
     }
 
-    if (!post) {
-        return <p>Loading...</p>;
+    function handleImageChange(e) {
+        const file = e.target.files[0];
+        setImage(file);
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => setPreviewImage(reader.result);
+            reader.readAsDataURL(file);
+        }
+    }
+
+    if (loading && !post) {
+        return <div className="flex justify-center items-center">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="text-red-500">Error: {error}</div>;
     }
 
     return (
@@ -69,32 +89,95 @@ export default function Page({ params }) {
             {isEditing ? (
                 <form onSubmit={handleUpdate} className="space-y-4">
                     <div>
-                        <label htmlFor="title" className="block text-sm font-medium">Title</label>
+                        <label htmlFor="title" className="block text-sm font-medium">
+                            Title
+                        </label>
                         <input
                             id="title"
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             className="w-full p-2 border rounded"
+                            disabled={loading}
                         />
                     </div>
                     <div>
-                        <label htmlFor="description" className="block text-sm font-medium">Description</label>
+                        <label htmlFor="description" className="block text-sm font-medium">
+                            Description
+                        </label>
                         <textarea
                             id="description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             className="w-full p-2 border rounded"
+                            disabled={loading}
                         />
                     </div>
-                    <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded">Save</button>
-                    <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 text-gray-600">Cancel</button>
+                    <div>
+                        <label htmlFor="image" className="block text-sm font-medium">
+                            Update Image
+                        </label>
+                        {previewImage && (
+                            <div className="mt-2">
+                                <Image
+                                    src={previewImage}
+                                    alt="Current Image"
+                                    width={300}
+                                    height={200}
+                                    className="rounded"
+                                />
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            id="image"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="mt-2"
+                            disabled={loading}
+                        />
+                    </div>
+                    <div className="space-x-2">
+                        <button
+                            type="submit"
+                            className="px-4 py-2 text-white bg-blue-500 rounded disabled:opacity-50"
+                            disabled={loading}
+                        >
+                            {loading ? "Saving..." : "Save"}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setIsEditing(false)}
+                            className="px-4 py-2 text-gray-600 disabled:opacity-50"
+                            disabled={loading}
+                        >
+                            Cancel
+                        </button>
+                    </div>
                 </form>
             ) : (
                 <>
-                    <h3 className="text-lg font-bold">{post?.data?.task?.title ?? ''}</h3>
-                    <p>{post?.data?.task?.description ?? ''}</p>
-                    <button onClick={() => setIsEditing(true)} className="px-4 py-2 mt-4 text-white bg-green-500 rounded">Edit</button>
+                    <h3 className="text-lg font-bold">{post?.data?.task?.title ?? ""}</h3>
+                    <p>{post?.data?.task?.description ?? ""}</p>
+                    {post?.data?.task?.image ? (
+                        <Image
+                            src={post?.data?.task?.image}
+                            alt={post?.data?.task?.title}
+                            width={300}
+                            height={200}
+                            className="mt-2 rounded"
+                        />
+                    ) : (
+                        <div className="mt-2 w-full max-w-xs rounded bg-gray-200 text-center py-4 text-gray-500">
+                            No Image Available
+                        </div>
+                    )}
+                    <button
+                        onClick={() => setIsEditing(true)}
+                        className="px-4 py-2 mt-4 text-white bg-green-500 rounded"
+                    >
+                        Edit
+                    </button>
                     <hr />
                 </>
             )}
