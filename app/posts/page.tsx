@@ -94,15 +94,15 @@ export default function Page() {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold mb-4">My posts</h1>
+            <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">My Posts</h1>
 
             {/* Create Post Form */}
             <form
                 onSubmit={handleCreatePost}
-                className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md mb-6"
+                className="bg-gradient-to-r from-green-600 to-green-400 rounded-lg shadow-lg p-8 w-full max-w-md mb-6"
             >
                 <div className="mb-4">
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="title" className="block text-sm font-medium text-white">
                         Title
                     </label>
                     <input
@@ -118,7 +118,7 @@ export default function Page() {
                 <div className="mb-4">
                     <label
                         htmlFor="description"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-white"
                     >
                         Description
                     </label>
@@ -133,7 +133,7 @@ export default function Page() {
                 </div>
 
                 <div className="mb-4">
-                    <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="image" className="block text-sm font-medium text-white">
                         Upload Image
                     </label>
                     <input
@@ -147,7 +147,7 @@ export default function Page() {
 
                 <button
                     type="submit"
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition-colors"
+                    className="w-full px-4 py-2 text-white font-semibold bg-gradient-to-r from-green-600 to-green-400 rounded-md shadow-md hover:bg-gradient-to-r hover:from-green-500 hover:to-green-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 >
                     Create Post
                 </button>
@@ -157,7 +157,7 @@ export default function Page() {
             <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md mb-4">
                 {posts.length > 0 ? (
                     posts.map((post) => (
-                        <div key={post.id} className="mb-4">
+                        <div key={post.id} className="mb-6">
                             <h3
                                 className="text-lg font-bold cursor-pointer hover:text-green-600"
                                 onClick={() => {
@@ -182,11 +182,11 @@ export default function Page() {
                             )}
                             <button
                                 onClick={() => handleDelete(post.uuid)}
-                                className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
+                                className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition-colors"
                             >
                                 Delete
                             </button>
-                            <hr />
+                            <hr className="my-4" />
                         </div>
                     ))
                 ) : (

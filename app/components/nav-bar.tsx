@@ -1,8 +1,42 @@
-// components/Navbar.js
+'use client'
 import Link from "next/link";
-import { Home, Mail, Info, LogIn, UserPlus } from "lucide-react";
+import { Home, Mail, Info, LogIn, UserPlus, User, FileText } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 
 export default function Navbar() {
+    const [isCompanyDropdownOpen, setIsCompanyDropdownOpen] = useState(false);
+    const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+    const companyDropdownRef = useRef(null);
+    const userDropdownRef = useRef(null);
+
+    // Handle clicks outside the dropdowns to close them
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target)) {
+                setIsCompanyDropdownOpen(false);
+            }
+            if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+                setIsUserDropdownOpen(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    // Toggle dropdowns
+    const toggleCompanyDropdown = () => {
+        setIsCompanyDropdownOpen(!isCompanyDropdownOpen);
+        setIsUserDropdownOpen(false); // Close other dropdown
+    };
+
+    const toggleUserDropdown = () => {
+        setIsUserDropdownOpen(!isUserDropdownOpen);
+        setIsCompanyDropdownOpen(false); // Close other dropdown
+    };
+
     return (
         <nav className="bg-white shadow-md">
             <div className="container mx-auto px-4">
@@ -16,6 +50,35 @@ export default function Navbar() {
 
                     {/* Navigation Links */}
                     <div className="hidden md:flex items-center space-x-1">
+                        {/* User Dropdown */}
+                        <div className="relative" ref={userDropdownRef}>
+                            <button 
+                                onClick={toggleUserDropdown}
+                                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors duration-200 flex items-center space-x-1"
+                            >
+                                <User className="h-4 w-4" />
+                                <span>User</span>
+                            </button>
+                            {isUserDropdownOpen && (
+                                <div className="absolute bg-white shadow-md rounded-md mt-2 py-2 w-48 z-10">
+                                    <Link
+                                        href="/user"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 flex items-center"
+                                    >
+                                        <User className="h-4 w-4 mr-2" />
+                                        Profile
+                                    </Link>
+                                    <Link
+                                        href="/posts"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 flex items-center"
+                                    >
+                                        <FileText className="h-4 w-4 mr-2" />
+                                        Posts
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+
                         <Link
                             href="/"
                             className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors duration-200 flex items-center space-x-1"
@@ -24,21 +87,33 @@ export default function Navbar() {
                             <span>Home</span>
                         </Link>
 
-                        <Link
-                            href="/contact-us"
-                            className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors duration-200 flex items-center space-x-1"
-                        >
-                            <Mail className="h-4 w-4" />
-                            <span>Contact</span>
-                        </Link>
-
-                        <Link
-                            href="/about-us"
-                            className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors duration-200 flex items-center space-x-1"
-                        >
-                            <Info className="h-4 w-4" />
-                            <span>About</span>
-                        </Link>
+                        {/* Company Dropdown */}
+                        <div className="relative" ref={companyDropdownRef}>
+                            <button 
+                                onClick={toggleCompanyDropdown}
+                                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors duration-200 flex items-center space-x-1"
+                            >
+                                <span>Company</span>
+                            </button>
+                            {isCompanyDropdownOpen && (
+                                <div className="absolute bg-white shadow-md rounded-md mt-2 py-2 w-48 z-10">
+                                    <Link
+                                        href="/contact-us"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 flex items-center"
+                                    >
+                                        <Mail className="h-4 w-4 mr-2" />
+                                        Contact Us
+                                    </Link>
+                                    <Link
+                                        href="/about-us"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 flex items-center"
+                                    >
+                                        <Info className="h-4 w-4 mr-2" />
+                                        About Us
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
 
                         <div className="h-6 w-px bg-gray-200 mx-2"></div>
 
@@ -66,48 +141,6 @@ export default function Navbar() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-                    </div>
-                </div>
-
-                {/* Mobile Menu */}
-                <div className="md:hidden hidden">
-                    <div className="px-2 pt-2 pb-3 space-y-1">
-                        <Link
-                            href="/"
-                            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors duration-200"
-                        >
-                            Home
-                        </Link>
-
-                        <Link
-                            href="/contact-us"
-                            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors duration-200"
-                        >
-                            Contact
-                        </Link>
-
-                        <Link
-                            href="/about-us"
-                            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors duration-200"
-                        >
-                            About
-                        </Link>
-
-                        <div className="h-px bg-gray-200 my-2"></div>
-
-                        <Link
-                            href="/login"
-                            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors duration-200"
-                        >
-                            Sign In
-                        </Link>
-
-                        <Link
-                            href="/register"
-                            className="block px-3 py-2 rounded-md text-base font-medium text-white bg-green-600 hover:bg-green-700 transition-colors duration-200"
-                        >
-                            Sign Up
-                        </Link>
                     </div>
                 </div>
             </div>
