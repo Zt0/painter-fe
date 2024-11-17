@@ -9,7 +9,7 @@ export default function Page({ params }) {
     useEffect(() => {
         async function getUser() {
             try {
-                const response = await axiosInstance.get(`/users/${id}`)
+                const response = await axiosInstance.get(`/users`)
 
                 const data = await response.data;
                 console.log({data: data.user}, 2)
