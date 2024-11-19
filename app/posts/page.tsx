@@ -93,16 +93,16 @@ export default function Page() {
     }
 
     return (
-        <div>
+        <div className="mx-auto flex flex-col items-center text-center">
             <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">My Posts</h1>
 
             {/* Create Post Form */}
             <form
                 onSubmit={handleCreatePost}
-                className="bg-gradient-to-r from-green-600 to-green-400 rounded-lg shadow-lg p-8 w-full max-w-md mb-6"
+                className=" rounded-lg shadow-lg p-8 w-full max-w-md mb-6"
             >
                 <div className="mb-4">
-                    <label htmlFor="title" className="block text-sm font-medium text-white">
+                    <label htmlFor="title" className="block text-sm font-medium text-green">
                         Title
                     </label>
                     <input
@@ -118,7 +118,7 @@ export default function Page() {
                 <div className="mb-4">
                     <label
                         htmlFor="description"
-                        className="block text-sm font-medium text-white"
+                        className="block text-sm font-medium text-green"
                     >
                         Description
                     </label>
@@ -154,8 +154,8 @@ export default function Page() {
             </form>
 
             {/* Posts List */}
-            <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md mb-4">
-                {posts.length > 0 ? (
+            <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md mb-4 mx-auto flex flex-col items-center">
+            {posts.length > 0 ? (
                     posts.map((post) => (
                         <div key={post.id} className="mb-6">
                             <h3
