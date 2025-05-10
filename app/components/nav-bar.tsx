@@ -6,16 +6,17 @@ import { useState, useRef, useEffect } from "react";
 export default function Navbar() {
     const [isCompanyDropdownOpen, setIsCompanyDropdownOpen] = useState(false);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-    const companyDropdownRef = useRef(null);
-    const userDropdownRef = useRef(null);
+    const companyDropdownRef = useRef<HTMLDivElement>(null);
+    const userDropdownRef = useRef<HTMLDivElement>(null);
 
     // Handle clicks outside the dropdowns to close them
     useEffect(() => {
-        function handleClickOutside(event) {
-            if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target)) {
+        function handleClickOutside(event: MouseEvent) {
+            const target = event.target as Node;
+            if (companyDropdownRef.current && !companyDropdownRef.current.contains(target)) {
                 setIsCompanyDropdownOpen(false);
             }
-            if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+            if (userDropdownRef.current && !userDropdownRef.current.contains(target)) {
                 setIsUserDropdownOpen(false);
             }
         }

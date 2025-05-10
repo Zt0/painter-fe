@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/app/lib/axios-instance";
 import { Clock, Calendar, ChevronRight } from "lucide-react";
+import axios from "axios";
 
 export default function Page() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -17,7 +18,11 @@ export default function Page() {
                 const response = await axiosInstance.get('/tasks/feed');
                 setPosts(response.data.task || []);
             } catch (err) {
-                setError(err.response?.data?.message || "Failed to fetch posts");
+                if (axios.isAxiosError(err)) {
+                    setError(err.response?.data?.message || "Failed to fetch posts");
+                } else {
+                    setError("Failed to fetch posts");
+                }
             } finally {
                 setLoading(false);
             }
@@ -73,7 +78,7 @@ export default function Page() {
                 {/* Posts Grid */}
                 <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {posts.length > 0 ? (
-                        posts.map((post) => (
+                        posts.map((post: {id: string, uuid: string, image: string, title: string, description: string, createdAt: string}) => (
                             <div
                                 key={post.id}
                                 className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"

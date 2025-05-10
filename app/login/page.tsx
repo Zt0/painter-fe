@@ -8,7 +8,7 @@ export default function Page() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     const router = useRouter();
 
@@ -75,8 +75,10 @@ export default function Page() {
                                 const tokens = (await tokensResponse.json()).data;
                                 console.log({ tokens });
                                 localStorage.setItem('accessToken', tokens.accessToken);
+                                console.log(111, localStorage.getItem("accessToken"))
                                 const payload = decodeJWT(tokens.accessToken);
                                 console.log({ payload });
+                                console.log(222, localStorage.getItem("accessToken"))
                                 await router.push(`/user/${payload.uuid}`);
                             } catch (err) {
                                 setError('Login failed, please check your credentials.');

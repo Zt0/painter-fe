@@ -9,6 +9,7 @@ export default function Page({ params }) {
     useEffect(() => {
         async function getUser() {
             try {
+                console.log(333, localStorage.getItem("accessToken"))
                 const response = await axiosInstance.get(`/users`)
 
                 const data = await response.data;
@@ -34,6 +35,8 @@ export default function Page({ params }) {
                 <div key={'533'} className="mb-4">
                     <h3 className="text-lg font-bold">{user.firstName || "no first name"}</h3>
                     <p>{user.lastName || "no last name"}</p>
+                    <p>"age: 23</p>
+                    <p>"painter</p>
                     <hr/>
                 </div>
             </div>

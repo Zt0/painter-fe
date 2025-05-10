@@ -68,7 +68,7 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
   ];
 };
 
-export function decodeJWT(token) {
+export function decodeJWT(token: string) {
   const base64Url = token.split('.')[1]; // Get the payload part
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
   const jsonPayload = decodeURIComponent(

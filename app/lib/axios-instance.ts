@@ -3,9 +3,10 @@ import axios from 'axios';
 import { log } from 'console';
 import { redirect } from 'next/navigation';
 
+console.log(4444, localStorage.getItem('accessToken'))
 const axiosInstance = axios.create({
     baseURL: `${process.env.NEXT_PUBLIC_BACKEND_URL}`,
-    headers: {'Authorization': `Bearer ${localStorage.getItem('accessToken')}`}
+    headers: {'Authorization': `Bearer ${localStorage.getItem('accessToken')}`},
 });
 
 // Request interceptor

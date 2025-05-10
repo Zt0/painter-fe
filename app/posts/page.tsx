@@ -16,7 +16,7 @@ export default function Page() {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
+                    },
             });
             if (!response.ok) {
                 throw new Error(`Error: ${response.statusText}`);
@@ -63,7 +63,7 @@ export default function Page() {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tasks`, {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                 },
                 body: formData,
             });
