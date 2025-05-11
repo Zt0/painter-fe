@@ -1,13 +1,27 @@
 "use client";
-import { useEffect, useState } from "react";
+import {FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+interface IPost {
+    title: string
+    description: string
+    uuid: number
+    id: number
+    image: string
+}
+
+interface INewPost {
+    title: string
+    description: string
+    image: string | null
+}
+
 export default function Page() {
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState<IPost[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [newPost, setNewPost] = useState({ title: "", description: "", image: null });
+    const [newPost, setNewPost] = useState<INewPost>({ title: "", description: "", image: null });
     const router = useRouter();
 
     async function fetchPosts() {
@@ -23,14 +37,14 @@ export default function Page() {
             }
             const data = await response.json();
             setPosts(data.data.task);
-        } catch (err) {
+        } catch (err: any) {
             setError(err.message);
         } finally {
             setLoading(false);
         }
     }
 
-    async function handleDelete(uuid) {
+    async function handleDelete(uuid: number) {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tasks/${uuid}`, {
                 method: "DELETE",
@@ -42,14 +56,13 @@ export default function Page() {
                 throw new Error(`Error: ${response.statusText}`);
             }
 
-            // Update the posts list after deletion
             setPosts((prevPosts) => prevPosts.filter((post) => post.uuid !== uuid));
         } catch (err) {
             console.error("Failed to delete post:", err);
         }
     }
 
-    async function handleCreatePost(event) {
+    async function handleCreatePost(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         const formData = new FormData();
@@ -95,8 +108,6 @@ export default function Page() {
     return (
         <div className="mx-auto flex flex-col items-center text-center">
             <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">My Posts</h1>
-
-            {/* Create Post Form */}
             <form
                 onSubmit={handleCreatePost}
                 className=" rounded-lg shadow-lg p-8 w-full max-w-md mb-6"
@@ -127,7 +138,7 @@ export default function Page() {
                         value={newPost.description}
                         onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        rows="3"
+                        rows={3}
                         required
                     ></textarea>
                 </div>
@@ -140,7 +151,7 @@ export default function Page() {
                         type="file"
                         id="image"
                         accept="image/*"
-                        onChange={(e) => setNewPost({ ...newPost, image: e.target.files[0] })}
+                        onChange={(e) => setNewPost({ ...newPost, image: e?.target?.files?.[0] as unknown as string })}
                         className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                     />
                 </div>

@@ -2,8 +2,13 @@
 import {useEffect, useState} from "react";
 import axiosInstance from "@/app/lib/axios-instance";
 
+interface IUser {
+    firstName: string;
+    lastName: string;
+}
+
 export default function Page() {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<IUser | null>(null);
     useEffect(() => {
         async function getUser() {
             try {

@@ -19,7 +19,7 @@ export default function Page() {
         }
         setLoading(true);
         try {
-            const response = await axiosInstance.post(`/users`, { email, password, firstName, lastName });
+            await axiosInstance.post(`/users`, { email, password, firstName, lastName });
             router.push('/login');
         } catch (err) {
             console.error(err);
