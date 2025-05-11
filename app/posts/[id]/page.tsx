@@ -133,7 +133,7 @@
                             {previewImage && (
                                 <div className="mt-2">
                                     <Image
-                                        src={previewImage}
+                                        src={previewImage as string}
                                         alt="Current Image"
                                         width={300}
                                         height={200}

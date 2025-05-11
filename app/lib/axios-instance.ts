@@ -1,43 +1,35 @@
-"use client";
+// "use client" not necessary here since this is now safe
 import axios from 'axios';
-import { log } from 'console';
-import { redirect } from 'next/navigation';
 
-console.log(4444, localStorage.getItem('accessToken'))
 const axiosInstance = axios.create({
-    baseURL: `${process.env.NEXT_PUBLIC_BACKEND_URL}`,
-    headers: {'Authorization': `Bearer ${localStorage.getItem('accessToken')}`},
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
 });
 
-// Request interceptor
+// Request interceptor to set token dynamically on client side
 axiosInstance.interceptors.request.use(
     (config) => {
+        if (typeof window !== 'undefined') {
+            const token = localStorage.getItem('accessToken');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+        }
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
 // Response interceptor
 axiosInstance.interceptors.response.use(
-    (response) => {
-        return response.data;
-    },
+    (response) => response.data,
     (error) => {
-        // Check if error has response
-        if (error.response) {
-            // Check for 401 status and JWT expired message
-            console.log(234, error.response.status,  error.response.data?.message)
+        if (typeof window !== 'undefined') {
             if (
-                error.response.status === 401 && 
-            ['jwt expired', 'jwt malformed'].includes( error.response.data?.message)
+                error.response?.status === 401 &&
+                ['jwt expired', 'jwt malformed'].includes(error.response.data?.message)
             ) {
-                // Clear local storage
-                console.log(325235235)
                 localStorage.removeItem('accessToken');
-                // Redirect to login page
-                redirect('/login');
+                window.location.href = '/login'; // redirect() doesn't work in client context
             }
         }
         return Promise.reject(error);

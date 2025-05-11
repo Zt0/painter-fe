@@ -1,15 +1,15 @@
 "use client";
-import { useState } from "react";
+import {FormEvent, useState} from "react";
 import { useRouter } from "next/navigation";
 
 export default function CreatePostPage() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
-    async function handleSubmit(e) {
+    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setError(null);
         setIsSubmitting(true);
@@ -37,7 +37,6 @@ export default function CreatePostPage() {
             const data = await response.json();
             console.log("Post created:", data);
 
-            // Redirect to the posts list page or the newly created post's page
             router.push("/posts");
         } catch (err) {
             console.error("Failed to create post:", err);
